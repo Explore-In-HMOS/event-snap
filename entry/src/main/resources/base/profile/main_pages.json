@@ -1,0 +1,8 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/EventDetail",
+    "pages/MapPage",
+    "pages/LoginPage"
+  ]
+}

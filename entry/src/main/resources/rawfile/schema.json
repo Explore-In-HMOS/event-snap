@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 10,
+  "objectTypes": [
+    {
+      "objectTypeName": "Event",
+      "fields": [
+        {
+          "fieldName": "id",
+          "fieldType": "Integer",
+          "belongPrimaryKey": true,
+          "notNull": true,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "title",
+          "fieldType": "String",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "time",
+          "fieldType": "String",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "qrCode",
+          "fieldType": "String",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "favorite",
+          "fieldType": "Boolean",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false,
+          "defaultValue": "false"
+        },
+        {
+          "fieldName": "location",
+          "fieldType": "String",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "qrCode",
+          "indexList": [
+            {
+              "fieldName": "qrCode",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "location",
+          "indexList": [
+            {
+              "fieldName": "location",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "time",
+          "indexList": [
+            {
+              "fieldName": "title",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "id",
+          "indexList": [
+            {
+              "fieldName": "id",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "title",
+          "indexList": [
+            {
+              "fieldName": "title",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "favorite",
+          "indexList": [
+            {
+              "fieldName": "favorite",
+              "sortType": "ASC"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "objectTypeName": "UserInfo",
+      "fields": [
+        {
+          "fieldName": "eventId",
+          "fieldType": "Integer",
+          "belongPrimaryKey": true,
+          "notNull": true,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "userId",
+          "fieldType": "String",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "liked",
+          "fieldType": "Boolean",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        },
+        {
+          "fieldName": "likedNumber",
+          "fieldType": "Integer",
+          "belongPrimaryKey": false,
+          "notNull": false,
+          "isNeedEncrypt": false,
+          "isSensitive": false
+        }
+      ],
+      "indexes": [
+        {
+          "indexName": "eventId",
+          "indexList": [
+            {
+              "fieldName": "eventId",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "userId",
+          "indexList": [
+            {
+              "fieldName": "userId",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "likedNumber",
+          "indexList": [
+            {
+              "fieldName": "likedNumber",
+              "sortType": "ASC"
+            }
+          ]
+        },
+        {
+          "indexName": "liked",
+          "indexList": [
+            {
+              "fieldName": "liked",
+              "sortType": "ASC"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "objectTypeName": "Event",
+      "permissions": [
+        {
+          "role": "World",
+          "rights": [
+            "Read"
+          ]
+        },
+        {
+          "role": "Authenticated",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        },
+        {
+          "role": "Creator",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        },
+        {
+          "role": "Administrator",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        }
+      ]
+    },
+    {
+      "objectTypeName": "UserInfo",
+      "permissions": [
+        {
+          "role": "World",
+          "rights": [
+            "Read"
+          ]
+        },
+        {
+          "role": "Authenticated",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        },
+        {
+          "role": "Creator",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        },
+        {
+          "role": "Administrator",
+          "rights": [
+            "Read",
+            "Upsert",
+            "Delete"
+          ]
+        }
+      ]
+    }
+  ]
+}

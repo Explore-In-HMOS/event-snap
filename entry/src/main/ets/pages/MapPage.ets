@@ -1,0 +1,159 @@
+import { map, mapCommon, MapComponent, navi } from '@kit.MapKit';
+import { AsyncCallback, BusinessError } from '@kit.BasicServicesKit';
+import { LocationData } from '../model/LocationData';
+import { PreferencesUtil } from '../utils/PreferencesUtil';
+import { router } from '@kit.ArkUI';
+
+let context = getContext(this);
+
+@Entry
+@Component
+export struct MapPage {
+  private TAG = 'HuaweiMapDemo';
+  private mapOptions?: mapCommon.MapOptions;
+  private callback?: AsyncCallback<map.MapComponentController>;
+  private mapController?: map.MapComponentController;
+  private mapEventManager?: map.MapEventManager;
+  @LocalStorageProp('locationLongitude') currLocationLongitude: number = 0;
+  @LocalStorageProp('locationLatitude') currLocationLatitude: number = 0;
+  getParam = this.getUIContext().getRouter().getParams() as LocationData;
+
+  private loadPreferences() {
+    let util = PreferencesUtil.getInstance();
+    let preferences = util.getPreferences(context);
+    this.currLocationLongitude = util.getPreference(preferences, 'locationLongitude', 0) as number;
+    this.currLocationLatitude = util.getPreference(preferences, 'locationLatitude', 0) as number;
+  }
+
+  aboutToAppear(): void {
+    this.loadPreferences()
+    console.log('Get Param Map : ', this.getParam.name)
+    // Map initialization parameters used to set the coordinates of the map center point and zoom level.
+    this.mapOptions = {
+      position: {
+        target: {
+          latitude: this.currLocationLatitude,
+          longitude: this.currLocationLongitude
+        },
+        zoom: 18
+      }
+    };
+
+    // Map initialization callback.
+    this.callback = async (err, mapController) => {
+      if (!err) {
+        // Obtain mapController to operate the map.
+        this.mapController = mapController;
+        this.mapEventManager = this.mapController.getEventManager();
+        let callback = () => {
+          console.info(this.TAG, `on-mapLoad`);
+        }
+        this.mapEventManager.on('mapLoad', callback);
+      } else {
+        console.error(`Failed to initialize the map. Code: ${err.code}; message: ${err.message}`);
+      }
+    };
+    this.mapController?.setMyLocationEnabled(true)
+    this.mapController?.setMyLocationControlsEnabled(true)
+
+  }
+
+  onPageShow(): void {
+    // Switch the map to the foreground.
+    if (this.mapController) {
+      this.mapController.show();
+    }
+    this.drawRoute()
+  }
+
+  async drawRoute() {
+    try {
+
+      let params: navi.DrivingRouteParams = {
+        // Longitude and latitude of the departure place.
+        origins: [{
+          'latitude': this.currLocationLatitude!!,
+          'longitude': this.currLocationLongitude!!
+        }],
+        // Longitude and latitude of the destination.
+        destination: {
+          'latitude': this.getParam.latitude,
+          'longitude': this.getParam.longitude
+        },
+        // Waypoints on the route.
+        language: 'en',
+      };
+      try {
+        const result = await navi.getDrivingRoutes(params);
+
+        let mapRoute = result.routes[0].overviewPolyline
+        console.log('result.routes[0].overviewPolyline: ', mapRoute!![0].latitude,
+          ' long: mapRoute!![index].longitude: ', mapRoute!![0].longitude)
+        let polylineOptions: mapCommon.MapPolylineOptions = {
+          width: 10.0,
+          points: mapRoute!!.map((points) => {
+            //  console.log("Maprouting: ",points.longitude, points )
+            return { longitude: points.longitude, latitude: points.latitude } as mapCommon.LatLng
+          })
+        };
+        let markerOptions1: mapCommon.MarkerOptions = {
+          position: {
+            latitude: this.getParam.latitude,
+            longitude: this.getParam.longitude
+          },
+          // The icon must be stored in the resources/base/media directory.
+          icon: $r('app.media.finish'),
+          anchorU: 0.5,
+          anchorV: 0.5,
+          visible: true,
+        };
+        let markerOptions2: mapCommon.MarkerOptions = {
+          position: {
+            latitude: this.currLocationLatitude,
+            longitude: this.currLocationLongitude
+          },
+          // The icon must be stored in the resources/base/media directory.
+          icon: $r('app.media.location_target'),
+          anchorU: 0.5,
+          anchorV: 0.5,
+          visible: true,
+        };
+        this.mapController?.addMarker(markerOptions1)
+        this.mapController?.addMarker(markerOptions2)
+        this.mapController?.addPolyline(polylineOptions)
+        console.info(`Succeeded in getting driving routes. result is ${JSON.stringify(result.routes[0])}`);
+      } catch (error) {
+        const err: BusinessError = error as BusinessError;
+        console.error(`Succeeded in getting driving routes. Code is ${err.code}, message is ${err.message}`);
+      }
+    } catch (e) {
+      console.log('Error : ', e)
+    }
+  }
+
+  // This is called each time the page is hidden, for example, during page redirection or when the app is switched to the background. It works only for the custom components decorated using @Entry.
+  onPageHide(): void {
+    // Switch the map to the background.
+    if (this.mapController) {
+      this.mapController.hide();
+    }
+  }
+
+  build() {
+    Column() {
+
+      Stack({ alignContent:Alignment.Top }) {
+
+        MapComponent({ mapOptions: this.mapOptions, mapCallback: this.callback })
+          .width('100%')
+          .height('100%')
+
+        Button('Back').width(75).height(25).margin({top:8}).onClick(()=>{
+         const data = this.getParam as LocationData
+          router.pushUrl({url:'pages/EventDetail',params:data})
+        }).backgroundColor(Color.Orange)
+      }.width('100%').height('100%')
+
+    }.height('100%').width('%100')
+  }
+}
