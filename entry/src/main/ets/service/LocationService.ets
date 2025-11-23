@@ -56,11 +56,11 @@ export default class LocationService {
       } else {
         const granted = await LocationUtil.requestLocationPermissions();
         if (granted) {
-          console.log('Granted')
+
         }
       }
     } catch (error) {
-      console.error(`Error handling permissions: ${JSON.stringify(error)}`);
+
     }
     try {
       let params: site.NearbySearchParams = {
@@ -101,18 +101,18 @@ export default class LocationService {
             updateCallback(this._LocationDatas, this._isLoading, this._error)
           }
         } else {
-          console.log('Result undefiend ', result.totalCount)
+
         }
       } catch (error) {
         const err: BusinessError = error as BusinessError;
-        console.error(`Failed in searching nearby. Code is ${err.code}, message is ${err.message},`);
+
       }
 
 
     } catch (e) {
       this._error = 'Error when loading locations'
       this._isLoading = false
-      console.error(this._error)
+
       updateCallback(this._LocationDatas, this._isLoading, this._error)
     }
   }

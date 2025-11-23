@@ -27,11 +27,11 @@ export class LocationUtil {
     return await atManager.checkAccessToken(tokenId, permission);
   }
 
-  async requestLocationPermissions(): Promise<boolean> {
+  async requestLocationPermissions(context:Context): Promise<boolean> {
     try {
       const atManager = abilityAccessCtrl.createAtManager();
       const result = await atManager.requestPermissionsFromUser(
-        getContext() as common.UIAbilityContext,
+        context,
         PERMISSIONS
       );
 

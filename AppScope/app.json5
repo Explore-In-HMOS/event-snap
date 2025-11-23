@@ -1,7 +1,7 @@
 {
   "app": {
     "bundleName": "com.hmosdemos.eventsnap",
-    "vendor": "example",
+    "vendor": "hmosdemos",
     "versionCode": 101,
     "versionName": "1.0.1",
     "icon": "$media:layered_image",

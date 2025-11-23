@@ -3,12 +3,13 @@ import LocationUtil from '../utils/LocationUtil';
 import LocationService from '../service/LocationService';
 import { LocationData } from '../model/LocationData';
 import { EventSnapCard } from '../component/EventCard';
-import { router } from '@kit.ArkUI';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
-let context = getContext(this);
+import { common } from '@kit.AbilityKit';
+
 @Entry
 @Component
 struct Index {
+  context=this.getUIContext().getHostContext() as common.UIAbilityContext
   @State message: string = 'Hello World';
   private currLocation: geoLocationManager.Location | undefined = undefined;
   service = new LocationService()
@@ -29,13 +30,13 @@ struct Index {
       if (hasPermissions) {
 
       } else {
-        const granted = await LocationUtil.requestLocationPermissions();
+        const granted = await LocationUtil.requestLocationPermissions(this.context);
         if (granted) {
-          console.log('Granted')
+
         }
       }
     } catch (error) {
-      console.error(`Error handling permissions: ${JSON.stringify(error)}`);
+
     }
 
     try {
@@ -44,7 +45,7 @@ struct Index {
         'locationScenario': geoLocationManager.UserActivityScenario.NAVIGATION
       }
       let locationCallback = (location: geoLocationManager.Location): void => {
-        console.info('locationCallback: data: ' + JSON.stringify(location));
+
       };
       const location = await geoLocationManager.getCurrentLocation();
       geoLocationManager.on('locationChange', request, locationCallback);
@@ -53,7 +54,7 @@ struct Index {
       this.saveLocation('locationLongitude',this.currLocation.longitude)
       this.saveLocation('locationLatitude',this.currLocation.latitude)
     } catch (err) {
-      console.error('errCode :' + JSON.stringify(err));
+
     }
     if (this.currLocation?.latitude != undefined && this.currLocation?.longitude != undefined) {
       await this.service.getLocations(this.currLocation?.latitude, this.currLocation?.longitude, (datas) => {
@@ -61,7 +62,7 @@ struct Index {
       })
       for (let index = 0; index < this.datasLocation.length; index++) {
         const element = this.datasLocation[index];
-        console.log(`Element ${index} : ${element.name} \n`)
+
       }
     }
 
@@ -69,7 +70,7 @@ struct Index {
 
   saveLocation(key: string, value: number) {
     let util = PreferencesUtil.getInstance();
-    let preferences = util.getPreferences(context);
+    let preferences = util.getPreferences(this.context);
     util.preferencesPut(preferences, key, value);
   }
 
@@ -85,7 +86,13 @@ struct Index {
             .backgroundColor(Color.Orange)
             .align(Alignment.Center)
             .onClick(() => {
-              router.pushUrl({ url: 'pages/EventDetail', params: cardModel })
+              this.getUIContext().getRouter().pushUrl(
+                {
+                  url:'pages/EventDetail',
+                  params:cardModel
+                }
+              )
+
             })
         })
       }.width('100%').backgroundColor(Color.White)

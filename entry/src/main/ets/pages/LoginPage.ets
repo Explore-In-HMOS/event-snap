@@ -1,5 +1,5 @@
 import { AccountViewModel } from '../viewmodel/AccountViewModel';
-import { router } from '@kit.ArkUI';
+
 
 @Entry
 @Component
@@ -45,9 +45,11 @@ export struct LoginPage {
     }.alignItems(HorizontalAlign.Center).justifyContent(FlexAlign.Center).width('100%').height('100%').backgroundColor(Color.White).onClick(async () => {
       const result = await this.viewModel.verifyAccount(this.getUIContext())
       if (result) {
-        router.pushUrl({
-          url: 'pages/Index'
-        })
+        this.getUIContext().getRouter().pushUrl(
+          {
+            url: 'pages/Index'
+          }
+        )
       } else {
 
         this.handlePopup = !this.handlePopup;

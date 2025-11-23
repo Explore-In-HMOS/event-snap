@@ -2,13 +2,13 @@ import { map, mapCommon, MapComponent, navi } from '@kit.MapKit';
 import { AsyncCallback, BusinessError } from '@kit.BasicServicesKit';
 import { LocationData } from '../model/LocationData';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
-import { router } from '@kit.ArkUI';
+import { common } from '@kit.AbilityKit';
 
-let context = getContext(this);
 
 @Entry
 @Component
 export struct MapPage {
+context=this.getUIContext().getHostContext() as common.UIAbilityContext
   private TAG = 'HuaweiMapDemo';
   private mapOptions?: mapCommon.MapOptions;
   private callback?: AsyncCallback<map.MapComponentController>;
@@ -20,14 +20,14 @@ export struct MapPage {
 
   private loadPreferences() {
     let util = PreferencesUtil.getInstance();
-    let preferences = util.getPreferences(context);
+    let preferences = util.getPreferences(this.context);
     this.currLocationLongitude = util.getPreference(preferences, 'locationLongitude', 0) as number;
     this.currLocationLatitude = util.getPreference(preferences, 'locationLatitude', 0) as number;
   }
 
   aboutToAppear(): void {
     this.loadPreferences()
-    console.log('Get Param Map : ', this.getParam.name)
+
     // Map initialization parameters used to set the coordinates of the map center point and zoom level.
     this.mapOptions = {
       position: {
@@ -87,12 +87,11 @@ export struct MapPage {
         const result = await navi.getDrivingRoutes(params);
 
         let mapRoute = result.routes[0].overviewPolyline
-        console.log('result.routes[0].overviewPolyline: ', mapRoute!![0].latitude,
-          ' long: mapRoute!![index].longitude: ', mapRoute!![0].longitude)
+
         let polylineOptions: mapCommon.MapPolylineOptions = {
           width: 10.0,
           points: mapRoute!!.map((points) => {
-            //  console.log("Maprouting: ",points.longitude, points )
+
             return { longitude: points.longitude, latitude: points.latitude } as mapCommon.LatLng
           })
         };
@@ -127,13 +126,12 @@ export struct MapPage {
         console.error(`Succeeded in getting driving routes. Code is ${err.code}, message is ${err.message}`);
       }
     } catch (e) {
-      console.log('Error : ', e)
+
     }
   }
 
   // This is called each time the page is hidden, for example, during page redirection or when the app is switched to the background. It works only for the custom components decorated using @Entry.
   onPageHide(): void {
-    // Switch the map to the background.
     if (this.mapController) {
       this.mapController.hide();
     }
@@ -150,7 +148,9 @@ export struct MapPage {
 
         Button('Back').width(75).height(25).margin({top:8}).onClick(()=>{
          const data = this.getParam as LocationData
-          router.pushUrl({url:'pages/EventDetail',params:data})
+          this.getUIContext().getRouter().pushUrl({
+            url:'pages/EventDetail',params:data
+          })
         }).backgroundColor(Color.Orange)
       }.width('100%').height('100%')
 

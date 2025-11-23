@@ -5,14 +5,13 @@ import { generateBarcode, scanCore } from '@kit.ScanKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { NotificationKitUtils } from '../utils/NotificationKitUtils';
-import { router } from '@kit.ArkUI';
+
 
 @Entry
 @Component
 export struct EventDetail {
   getParam = this.getUIContext().getRouter().getParams() as LocationData;
   @State pixelMap: image.PixelMap | undefined = undefined;
-
 
   async aboutToAppear() {
 
@@ -41,12 +40,15 @@ export struct EventDetail {
 
   build() {
     Column() {
-      Stack(){
-        Image($r('app.media.arrow')).width(32).height(24).objectFit(ImageFit.Contain).onClick(()=>{
-          router.pushUrl({url:'pages/Index'})
+      Stack() {
+        Image($r('app.media.arrow')).width(32).height(24).objectFit(ImageFit.Contain).onClick(() => {
+          this.getUIContext().getRouter().pushUrl({
+            url: 'pages/Index'
+          })
         })
       }.width('60%').align(Alignment.TopStart)
-      Text(this.getParam.name).textAlign(TextAlign.Center).width('100%').margin({top:4})
+
+      Text(this.getParam.name).textAlign(TextAlign.Center).width('100%').margin({ top: 4 })
       Image(this.pixelMap).width(75).height(75).objectFit(ImageFit.Contain).margin({ top: 16, bottom: 8 })
       Row() {
         Button('Join Event')
@@ -61,7 +63,9 @@ export struct EventDetail {
         Button('Go to map')
           .onClick(() => {
             const data = this.getParam as LocationData
-            router.pushUrl({ url: 'pages/MapPage', params: data })
+            this.getUIContext().getRouter().pushUrl({
+              url: 'pages/MapPage', params: data
+            })
           })
           .width('40%')
           .height(30)
