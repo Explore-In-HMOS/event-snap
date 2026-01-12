@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "com.hmosdemos.eventsnap",
+    "bundleName": "com.hmosdemos.wearable.eventsnap",
     "vendor": "hmosdemos",
     "versionCode": 101,
     "versionName": "1.0.1",

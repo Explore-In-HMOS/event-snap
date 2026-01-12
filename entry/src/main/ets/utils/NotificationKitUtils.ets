@@ -7,7 +7,7 @@ export class NotificationKitUtils {
   startNotification(uiContext:UIContext) {
     // Obtain the file descriptor of the vibration configuration file.
     let rawFd: resourceManager.RawFileDescriptor | undefined = uiContext.getHostContext()?.resourceManager.getRawFdSync('xxx.json');
-    if (rawFd != undefined) {
+    if (rawFd !== undefined) {
       // Start vibration.
       try {
         vibrator.startVibration({

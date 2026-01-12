@@ -13,9 +13,9 @@ export default class EntryAbility extends UIAbility {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
     try {
       pushService.getToken().then((data: string) => {
-        hilog.info(0x0000, 'testTag', 'Succeeded in getting push token: '+data);
+        console.info(`Succeeded in getting push token:  ${data}`);
       }).catch((err: BusinessError) => {
-        hilog.error(0x0000, 'testTag', 'Failed to get push token: %{public}d %{public}s', err.code, err.message);
+        console.error('testTag', 'Failed to get push token: %{public}d %{public}s', err.code, err.message);
       });
     } catch (err) {
       let e: BusinessError = err as BusinessError;

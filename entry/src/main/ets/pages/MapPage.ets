@@ -5,10 +5,17 @@ import { PreferencesUtil } from '../utils/PreferencesUtil';
 import { common } from '@kit.AbilityKit';
 
 
+@Builder
+export function PageThreeBuilder(name: string, param: Object) {
+  MapPage()
+}
+
+
 @Entry
 @Component
 export struct MapPage {
-context=this.getUIContext().getHostContext() as common.UIAbilityContext
+  context=this.getUIContext().getHostContext() as common.UIAbilityContext
+  pageInfos: NavPathStack = new NavPathStack();
   private TAG = 'HuaweiMapDemo';
   private mapOptions?: mapCommon.MapOptions;
   private callback?: AsyncCallback<map.MapComponentController>;
@@ -16,7 +23,12 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
   private mapEventManager?: map.MapEventManager;
   @LocalStorageProp('locationLongitude') currLocationLongitude: number = 0;
   @LocalStorageProp('locationLatitude') currLocationLatitude: number = 0;
-  getParam = this.getUIContext().getRouter().getParams() as LocationData;
+  getParam:LocationData = {
+    name:'',
+    latitude:0,
+    adress:'',
+    longitude:0
+  }
 
   private loadPreferences() {
     let util = PreferencesUtil.getInstance();
@@ -81,7 +93,7 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
           'longitude': this.getParam.longitude
         },
         // Waypoints on the route.
-        language: 'en',
+        language: 'en'
       };
       try {
         const result = await navi.getDrivingRoutes(params);
@@ -104,7 +116,7 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
           icon: $r('app.media.finish'),
           anchorU: 0.5,
           anchorV: 0.5,
-          visible: true,
+          visible: true
         };
         let markerOptions2: mapCommon.MarkerOptions = {
           position: {
@@ -115,7 +127,7 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
           icon: $r('app.media.location_target'),
           anchorU: 0.5,
           anchorV: 0.5,
-          visible: true,
+          visible: true
         };
         this.mapController?.addMarker(markerOptions1)
         this.mapController?.addMarker(markerOptions2)
@@ -130,7 +142,9 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
     }
   }
 
-  // This is called each time the page is hidden, for example, during page redirection or when the app is switched to the background. It works only for the custom components decorated using @Entry.
+  // This is called each time the page is hidden, for example,
+  // during page redirection or when the app is switched to the background.
+  // It works only for the custom components decorated using @Entry.
   onPageHide(): void {
     if (this.mapController) {
       this.mapController.hide();
@@ -138,22 +152,31 @@ context=this.getUIContext().getHostContext() as common.UIAbilityContext
   }
 
   build() {
-    Column() {
+    NavDestination(){
+      Column() {
 
-      Stack({ alignContent:Alignment.Top }) {
+        Stack({ alignContent:Alignment.Top }) {
 
-        MapComponent({ mapOptions: this.mapOptions, mapCallback: this.callback })
-          .width('100%')
-          .height('100%')
+          MapComponent({ mapOptions: this.mapOptions, mapCallback: this.callback })
+            .width('100%')
+            .height('100%')
 
-        Button('Back').width(75).height(25).margin({top:8}).onClick(()=>{
-         const data = this.getParam as LocationData
-          this.getUIContext().getRouter().pushUrl({
-            url:'pages/EventDetail',params:data
-          })
-        }).backgroundColor(Color.Orange)
-      }.width('100%').height('100%')
+          Button('Back').width(75).height(25).margin({top:8}).onClick(()=>{
+            const data = this.getParam as LocationData
+            this.pageInfos.pushPath({
+              name:`EventDetail`,
+              param:data
+            })
+          }).backgroundColor(Color.Orange)
+        }.width('100%').height('100%')
 
-    }.height('100%').width('%100')
+      }.height('100%').width('%100')
+    }.onReady((context:NavDestinationContext)=>{
+      this.pageInfos = context.pathStack
+      this.getParam.name = (context.pathInfo.param as LocationData).name
+      this.getParam.latitude = (context.pathInfo.param as LocationData).latitude
+      this.getParam.longitude=(context.pathInfo.param as LocationData).longitude
+      this.getParam.adress=(context.pathInfo.param as LocationData).adress
+    })
   }
 }

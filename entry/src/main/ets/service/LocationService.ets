@@ -6,7 +6,7 @@ import LocationUtil from '../utils/LocationUtil';
 
 
 export default class LocationService {
-  private _LocationDatas: Array<LocationData> = [];
+  private _locationDatas: Array<LocationData> = [];
   private _isLoading: boolean = false;
   private _locationDatasName: Array<string> = []
   private _currLocation: geoLocationManager.Location | undefined = undefined;
@@ -38,14 +38,14 @@ export default class LocationService {
   }
 
   public set LocationDatas(value: Array<LocationData>) {
-    this._LocationDatas = value;
+    this._locationDatas = value;
   }
 
   public get LocationDatas(): Array<LocationData> {
-    return this._LocationDatas;
+    return this._locationDatas;
   }
 
-  async getLocations(lat: number, long: number,
+  async getLocations(lat: number, long: number,context:Context,
     updateCallback: (locationDatas: Array<LocationData>, isLoading: boolean,
       error: string | null) => void) {
     try {
@@ -54,7 +54,7 @@ export default class LocationService {
       if (hasPermissions) {
 
       } else {
-        const granted = await LocationUtil.requestLocationPermissions();
+        const granted = await LocationUtil.requestLocationPermissions(context);
         if (granted) {
 
         }
@@ -72,33 +72,33 @@ export default class LocationService {
           'RESTAURANT',
           'TURKISH_RESTAURANT'
         ],
-        radius: 500,
+        radius: 500
       }
       // Return the nearby place search result.
       try {
         const result = await site.nearbySearch(params);
 
-        if (result.sites != undefined) {
+        if (result.sites !== undefined) {
           console.info(`Succeeded in searching nearby. result is ${JSON.stringify(result.sites[0].name)}`);
           for (let index = 0; index < result.sites.length; index++) {
 
 
-            if (result.sites[index].location?.latitude != undefined &&
-              result.sites[index].location?.longitude != undefined && result.sites[index].name != undefined) {
+            if (result.sites[index].location?.latitude !== undefined &&
+              result.sites[index].location?.longitude !== undefined && result.sites[index].name !== undefined) {
               const element: LocationData = {
                 latitude: result.sites[index].location!!.latitude,
                 longitude: result.sites[index].location!!.longitude,
                 name: result.sites[index].name || 'undefiend',
-                adress: result.sites[index].formatAddress || 'undefined',
+                adress: result.sites[index].formatAddress || 'undefined'
               };
-              this._LocationDatas[index] = element
+              this._locationDatas[index] = element
 
 
               console.info('Succeeded in searching by Data: ', result.sites[index].name, ' , ',
                 result.sites[index].formatAddress, result.sites[index].location!!.latitude.toString(), ' long: ',
                 result.sites[index].location!!.longitude.toString());
             }
-            updateCallback(this._LocationDatas, this._isLoading, this._error)
+            updateCallback(this._locationDatas, this._isLoading, this._error)
           }
         } else {
 
@@ -113,7 +113,7 @@ export default class LocationService {
       this._error = 'Error when loading locations'
       this._isLoading = false
 
-      updateCallback(this._LocationDatas, this._isLoading, this._error)
+      updateCallback(this._locationDatas, this._isLoading, this._error)
     }
   }
 

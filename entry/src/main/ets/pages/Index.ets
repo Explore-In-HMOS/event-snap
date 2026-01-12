@@ -6,11 +6,17 @@ import { EventSnapCard } from '../component/EventCard';
 import { PreferencesUtil } from '../utils/PreferencesUtil';
 import { common } from '@kit.AbilityKit';
 
+
+@Builder
+export function PageTwoBuilder(name: string, param: Object) {
+  Index()
+}
+
 @Entry
 @Component
 struct Index {
   context=this.getUIContext().getHostContext() as common.UIAbilityContext
-  @State message: string = 'Hello World';
+  pageInfos: NavPathStack = new NavPathStack();
   private currLocation: geoLocationManager.Location | undefined = undefined;
   service = new LocationService()
   @State datasLocation: Array<LocationData> = []
@@ -56,8 +62,9 @@ struct Index {
     } catch (err) {
 
     }
-    if (this.currLocation?.latitude != undefined && this.currLocation?.longitude != undefined) {
-      await this.service.getLocations(this.currLocation?.latitude, this.currLocation?.longitude, (datas) => {
+    if (this.currLocation?.latitude !== undefined && this.currLocation?.longitude !== undefined) {
+      await this.service.getLocations(this.currLocation?.latitude,
+        this.currLocation?.longitude,this.context,(datas) => {
         this.datasLocation = datas
       })
       for (let index = 0; index < this.datasLocation.length; index++) {
@@ -77,7 +84,7 @@ struct Index {
   build() {
     Scroll(this.scroll) {
       Column() {
-        ForEach(this.datasLocation, (cardModel: LocationData) => {
+        ForEach(this.datasLocation, (cardModel: LocationData , index:number) => {
           EventSnapCard({ eventName: cardModel.name })
             .width('80%')
             .height(30)
@@ -86,15 +93,15 @@ struct Index {
             .backgroundColor(Color.Orange)
             .align(Alignment.Center)
             .onClick(() => {
-              this.getUIContext().getRouter().pushUrl(
+              this.pageInfos.pushPath(
                 {
-                  url:'pages/EventDetail',
-                  params:cardModel
+                  name: `EventDetail`,
+                  param: cardModel
                 }
               )
 
             })
-        })
+        },(cardModel: LocationData , index:number) => cardModel.name)
       }.width('100%').backgroundColor(Color.White)
     }.scrollable(ScrollDirection.Vertical).scrollBar(0)
 

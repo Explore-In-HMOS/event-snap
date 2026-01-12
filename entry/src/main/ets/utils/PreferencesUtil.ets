@@ -65,7 +65,7 @@ export class PreferencesUtil {
       }
       return defaultValue;
     } catch (error) {
-      Logger.error(TAG, `Failed to get preference for key '${key}'. Code:${error.code}, message:${error.message}`);
+
       return defaultValue;
     }
   }
@@ -80,7 +80,7 @@ export class PreferencesUtil {
       const value = preferences.getSync(key, defaultValue);
       return Number(value) || defaultValue;
     } catch (error) {
-      Logger.error(TAG, `Failed to get number preference for key '${key}'. Code:${error.code}, message:${error.message}`);
+
       return defaultValue;
     }
   }
