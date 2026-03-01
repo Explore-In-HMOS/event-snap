@@ -7,14 +7,11 @@ you're going to attend the event but you get a vibration after clicking on it
 
 # Preview
 
-<div style="display:flex;  align : left;">
-<img src='screenshots/image1.png' style="width=24%;"/>
-<img src='screenshots/image2.png' style="width=24%;" />
-
-
-
-<img src='screenshots/image3.png' style="width=24%;"/>
-<img src='screenshots/image4.png' style="width=24%;"/>
+<div>
+<img src='screenshots/image1.png' width='24%'/>
+<img src='screenshots/image2.png' width='24%'/>
+<img src='screenshots/image3.png' width='24%'/>
+<img src='screenshots/image4.png' width='24%'/>
 </div>
 
 # Use Cases
